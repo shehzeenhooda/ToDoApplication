@@ -1,27 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-
+import { TodoService } from '../shared/todo.service'
 @Component({
   selector: 'app-todo',
   templateUrl: './todo.component.html',
-  styleUrls: ['./todo.component.css']
+  styleUrls: ['./todo.component.css'],
+  providers: [TodoService]
 })
 export class TodoComponent implements OnInit {
 
   listArray : any[];
   itemTitle: string;
-  constructor() { }
+  constructor(private toDoService: TodoService) { }
 
   ngOnInit() {
     this.clear();
-
   }
   clear(){
     this.itemTitle = '';
-    this.listArray = ["item 1", "item 2", "item 3", "item 4"];
+    this.populateToDoListBlock();
     }
+  populateToDoListBlock(){
+    const that = this;
+    that.listArray = [];
+    this.toDoService.getToDo().subscribe(function(data){
+    for(var ele in data){
+      that.listArray.push(data[ele]);
+    }    
+    });
+  }
 
   search(){
-    this.listArray = ["item 1", "item 2", "item 3", "item 4"];
+    this.populateToDoListBlock()
     var temp = this.itemTitle;
     
     var selected = this.listArray.filter(s => s.includes(temp));
